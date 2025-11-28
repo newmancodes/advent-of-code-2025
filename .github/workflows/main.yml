@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - run: cargo check --release
+
+    - run: cargo build --release
+
+    - run: cargo test --release
