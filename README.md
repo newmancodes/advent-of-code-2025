@@ -8,7 +8,7 @@ I use it for fun. This year, we'll be using [Rust](https://rust-lang.org/) to at
 
 ## The Puzzles
 
-Each day for the first 12 days of December 2025, a new puzzle will be released. As I attempt them I shall record how many stars I've gotten.
+Each day for the first 12 days of December 2025, a new puzzle will be released. As I attempt them, I shall record how many stars I've gotten.
 
 - ☆ Puzzle element unsolved
 - ⭐ Puzzle element solved
