@@ -4,7 +4,7 @@ From [the Advent of Code website](https://adventofcode.com/2025/about):
 
 > Advent of Code is an Advent calendar of small programming puzzles for a variety of skill levels that can be solved in any programming language you like. People use them as interview prep, company training, university coursework, practice problems, a speed contest, or to challenge each other.
 
-I use it for fun. This year, we'll be using [Rust](https://rust-lang.org/) to attack these puzzles. As this is for learning purposes I have not used any form of AI to complete the tasks.
+I use it for fun. This year, we'll be using [Rust](https://rust-lang.org/) to attack these puzzles. As this is for learning purposes I have not used any form of AI to complete the tasks, though I do ask for recommendations after solving to help me identify and apply more idiomatic solutions to the problems.
 
 ## The Puzzles
 
@@ -13,7 +13,7 @@ Each day for the first 12 days of December 2025, a new puzzle will be released. 
 - ☆ Puzzle element unsolved
 - ⭐ Puzzle element solved
 
-[Day 1 - ???? ☆☆](./day-01/README.md)  
+[Day 1 - Secret Entrance ⭐☆](./day-01/README.md)  
 [Day 2 - ???? ☆☆](./day-02/README.md)  
 [Day 3 - ???? ☆☆](./day-03/README.md)  
 [Day 4 - ???? ☆☆](./day-04/README.md)  
