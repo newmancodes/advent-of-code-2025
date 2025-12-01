@@ -112,11 +112,13 @@ impl Dial {
             },
             Rotation::Right(value) => {
                 for _ in 0..value {
-                    new_position = (new_position + 1) % 100;
+                    new_position = new_position + 1;
+                    if new_position > 99 {
+                        new_position = 0;
+                    }
+
                     if new_position == 0 {
                         self.times_passed_zero += 1;
-                    } else if new_position > 99 {
-                        new_position = 0;
                     }
                 }
             }
