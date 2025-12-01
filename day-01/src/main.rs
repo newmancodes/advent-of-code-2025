@@ -26,7 +26,8 @@ fn main() {
     }
 
     println!("The file has {} lines.", rotation_count);
-    println!("The dial stopped at 0 {} times.", dial.times_at_zero);
+    println!("The dial stopped at 0 {} times.", dial.times_stopped_at_zero);
+    println!("The dial passed 0 {} times.", dial.times_passed_zero);
 }
 
 #[derive(Debug, PartialEq)]
@@ -83,34 +84,52 @@ impl Rotation<u16> {
 
 struct Dial {
     position: u16,
-    times_at_zero: u16,
+    times_stopped_at_zero: u16,
+    times_passed_zero: u16,
 }
 
 impl Dial {
     fn new(initial_position: u16) -> Self {
         Self {
             position: initial_position,
-            times_at_zero: 0
+            times_stopped_at_zero: 0,
+            times_passed_zero: 0,
         }
     }
 
     fn rotate(mut self, rotation: Rotation<u16>) -> Self {
-        // Rotate the dial the specified number of steps in the specified direction.
+        let mut new_position = self.position as i32;
         match rotation {
-            Rotation::Left(value) => self.position = match self.position as i32 - (value % 100) as i32 {
-                result if result < 0 => (100 + result % 100) as u16,
-                result => result as u16 % 100
+            Rotation::Left(value) => {
+                for _ in 0..value {
+                    new_position = new_position - 1;
+                    if new_position == 0 {
+                        self.times_passed_zero += 1;
+                    } else if new_position < 0 {
+                        new_position = 99;
+                    }
+                }
             },
-            Rotation::Right(value) => self.position = (self.position + value) % 100,
+            Rotation::Right(value) => {
+                for _ in 0..value {
+                    new_position = (new_position + 1) % 100;
+                    if new_position == 0 {
+                        self.times_passed_zero += 1;
+                    } else if new_position > 99 {
+                        new_position = 0;
+                    }
+                }
+            }
         }
+        assert!(new_position >= 0 && new_position < 100, "The new position must be between 0 and 99 (inclusive).");
+        self.position = new_position as u16;
 
         assert!(self.position < 100);
-        // If the dial is at 0, increment the counter.
-        if self.position == 0 {
-            self.times_at_zero += 1;
-        }
 
-        println!("Rotated {:?} dial at position {}", rotation, self.position);
+        // If the dial has stopped at 0, increment the counter.
+        if self.position == 0 {
+            self.times_stopped_at_zero += 1;
+        }
 
         // Return the updated dial.
         self
@@ -126,22 +145,22 @@ mod tests {
         let dial = Dial::new(0);
         let rotated = dial.rotate(Rotation::Right(3));
         assert_eq!(rotated.position, 3);
-        assert_eq!(rotated.times_at_zero, 0);
+        assert_eq!(rotated.times_stopped_at_zero, 0);
 
         let dial = Dial::new(50);
         let rotated = dial.rotate(Rotation::Right(49));
         assert_eq!(rotated.position, 99);
-        assert_eq!(rotated.times_at_zero, 0);
+        assert_eq!(rotated.times_stopped_at_zero, 0);
 
         let dial = Dial::new(99);
         let rotated = dial.rotate(Rotation::Right(1));
         assert_eq!(rotated.position, 0);
-        assert_eq!(rotated.times_at_zero, 1);
+        assert_eq!(rotated.times_stopped_at_zero, 1);
 
         let dial = Dial::new(0);
         let rotated = dial.rotate(Rotation::Right(110));
         assert_eq!(rotated.position, 10);
-        assert_eq!(rotated.times_at_zero, 0);
+        assert_eq!(rotated.times_stopped_at_zero, 0);
     }
 
     #[test]
@@ -149,22 +168,22 @@ mod tests {
         let dial = Dial::new(0);
         let rotated = dial.rotate(Rotation::Left(3));
         assert_eq!(rotated.position, 97);
-        assert_eq!(rotated.times_at_zero, 0);
+        assert_eq!(rotated.times_stopped_at_zero, 0);
 
         let dial = Dial::new(50);
         let rotated = dial.rotate(Rotation::Left(49));
         assert_eq!(rotated.position, 1);
-        assert_eq!(rotated.times_at_zero, 0);
+        assert_eq!(rotated.times_stopped_at_zero, 0);
 
         let dial = Dial::new(1);
         let rotated = dial.rotate(Rotation::Left(1));
         assert_eq!(rotated.position, 0);
-        assert_eq!(rotated.times_at_zero, 1);
+        assert_eq!(rotated.times_stopped_at_zero, 1);
 
         let dial = Dial::new(0);
         let rotated = dial.rotate(Rotation::Left(110));
         assert_eq!(rotated.position, 90);
-        assert_eq!(rotated.times_at_zero, 0);
+        assert_eq!(rotated.times_stopped_at_zero, 0);
     }
 
     #[test]
@@ -177,7 +196,7 @@ mod tests {
             dial = dial.rotate(rotation);
         }
 
-        assert_eq!(dial.times_at_zero, 1);
+        assert_eq!(dial.times_stopped_at_zero, 1);
     }
 
     #[test]
@@ -201,7 +220,8 @@ mod tests {
             dial = dial.rotate(rotation);
         }
 
-        assert_eq!(dial.times_at_zero, 3);
+        assert_eq!(dial.times_stopped_at_zero, 3);
+        assert_eq!(dial.times_passed_zero, 6);
     }
 
     #[test]

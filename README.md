@@ -13,7 +13,7 @@ Each day for the first 12 days of December 2025, a new puzzle will be released. 
 - ☆ Puzzle element unsolved
 - ⭐ Puzzle element solved
 
-[Day 1 - Secret Entrance ⭐☆](./day-01/README.md)  
+[Day 1 - Secret Entrance ⭐⭐](./day-01/README.md)  
 [Day 2 - ???? ☆☆](./day-02/README.md)  
 [Day 3 - ???? ☆☆](./day-03/README.md)  
 [Day 4 - ???? ☆☆](./day-04/README.md)  
