@@ -8,7 +8,7 @@ fn main() {
 
     let file_path = &args[1];
     let path = Path::new(file_path);
-    let file = File::open(file_path);
+    let file = File::open(path);
 
     if file.is_err() {
         println!("Unable to read the file {:?}", file_path);
@@ -16,19 +16,23 @@ fn main() {
     }
 
     let reader = BufReader::new(file.unwrap());
-    let mut total_output_joltage = 0;
+    let mut total_output_simple_joltage = 0;
+    let mut total_output_complex_joltage = 0u64;
+
     for line in reader.lines() {
         match line {
             Ok(l) => {
                 // Strip BOM if present
                 let clean = l.trim_start_matches('\u{feff}');
-                total_output_joltage = total_output_joltage + clean.to_string().calculate_simple_joltage();
+                total_output_simple_joltage = total_output_simple_joltage + clean.to_string().calculate_simple_joltage();
+                total_output_complex_joltage = total_output_complex_joltage + clean.to_string().calculate_complex_joltage();
             },
             Err(_) => continue,
         }
     }
 
-    println!("The total output simple joltage is {}.", total_output_joltage);
+    println!("The total output simple joltage is {}.", total_output_simple_joltage);
+    println!("The total output complex joltage is {}.", total_output_complex_joltage);
 }
 
 trait JoltageCalculator {
@@ -54,13 +58,29 @@ impl JoltageCalculator for String {
 
     fn calculate_complex_joltage(&self) -> u64 {
         let chars: Vec<char> = self.chars().collect();
-        let mut maximum_joltage = 0u64;
+        let mut result = String::new();
+        let mut start = 0;
 
-        for i in 0..chars.len() - 12 {
-            
+        for position in 0..12 {
+            let remaining_needed = 12 - position - 1;
+
+            let search_end = chars.len() - remaining_needed;
+
+            let mut max_digit = '0';
+            let mut max_index = start;
+
+            for i in start..search_end {
+                if chars[i] > max_digit {
+                    max_digit = chars[i];
+                    max_index = i;
+                }
+            }
+
+            result.push(max_digit);
+            start = max_index + 1;
         }
 
-        maximum_joltage
+        result.parse::<u64>().unwrap()
     }
 }
 
