@@ -62,24 +62,23 @@ fn main() {
 
     println!("There are {} fresh ingredients.", fresh_ingredients.len());
 
-    // let mut covered_ingredients = ranges.iter()
-    //     .flat_map(| r | r.clone().into_iter() )
-    //     .collect::<Vec<u64>>();
-    // covered_ingredients.sort_unstable();
-    // covered_ingredients.dedup();
-    let mut covered_ingredients = HashSet::new();
-
-    for range in ranges {
-        for id in range.clone().into_iter() {
-            if !covered_ingredients.contains(&id) {
-                covered_ingredients.insert(id);
-            }
+    ranges.sort_unstable_by_key(| r | r.start);
+    
+    let mut rationalised_ranges = Vec::new();
+    let mut current_range = ranges[0].clone();
+    
+    for range in ranges.into_iter().skip(1) {
+        if range.start <= current_range.end {
+            current_range.end = current_range.end.max(range.end);
+        } else {
+            rationalised_ranges.push(current_range);
+            current_range = range;
         }
-        print!(".");
     }
-
-    println!();
-    println!("There are {} fresh ingredients.", covered_ingredients.len());
+    
+    rationalised_ranges.push(current_range);
+    
+    println!("There are {} fresh ingredients.", rationalised_ranges.iter().map(| r | r.end - r.start).sum::<u64>());
 }
 
 #[cfg(test)]
