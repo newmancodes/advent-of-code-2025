@@ -50,6 +50,8 @@ fn main() {
     let room = room_builder.build();
 
     println!("Room has {:?} accessible rolls.", room.count_accessible_rolls());
+    let (_, removed_rolls) = Room::remove_accessible_rolls(room);
+    println!("Removed {:?} rolls.", removed_rolls);
 }
 
 #[derive(Clone)]
@@ -126,6 +128,34 @@ impl Room {
         }
 
         adjacent_roll_count < 4
+    }
+
+    fn remove_accessible_rolls(mut room: Self) -> (Self, u32) {
+        let mut total_accessible_rolls = 0;
+
+        loop {
+            let mut accessible_roll_indexes = Vec::new();
+
+            for (index, cell) in room.cells.iter().enumerate() {
+                match cell {
+                    Cell::Roll if room.is_accessible(index) => accessible_roll_indexes.push(index),
+                    _ => continue,
+                }
+            }
+
+            let mut new_cells = room.cells.clone();
+            for index in accessible_roll_indexes.iter() {
+                new_cells[*index] = Cell::Empty;
+            }
+            room = Room { cells: new_cells, width: room.width };
+
+            total_accessible_rolls += accessible_roll_indexes.len();
+            if accessible_roll_indexes.len() == 0 {
+                break;
+            }
+        }
+
+        (room, total_accessible_rolls as u32)
     }
 }
 
