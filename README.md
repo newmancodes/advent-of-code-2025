@@ -18,7 +18,7 @@ Each day for the first 12 days of December 2025, a new puzzle will be released. 
 [Day 1 - Secret Entrance ⭐⭐](./day-01/README.md)  
 [Day 2 - Gift Shop ⭐⭐](./day-02/README.md)  
 [Day 3 - Lobby ⭐⭐](./day-03/README.md)  
-[Day 4 - ???? ☆☆](./day-04/README.md)  
+[Day 4 - Printing Department ⭐☆](./day-04/README.md)  
 [Day 5 - ???? ☆☆](./day-05/README.md)  
 [Day 6 - ???? ☆☆](./day-06/README.md)  
 [Day 7 - ???? ☆☆](./day-07/README.md)  
