@@ -3,7 +3,6 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::str::FromStr;
-use crate::ProcessingMode::Range;
 
 enum ProcessingMode {
     Range,
@@ -61,6 +60,14 @@ fn main() {
         .collect();
 
     println!("There are {} fresh ingredients.", fresh_ingredients.len());
+
+    let mut covered_ingredients = ranges.iter()
+        .flat_map(| r | r.clone().into_iter() )
+        .collect::<Vec<u64>>();
+    covered_ingredients.sort_unstable();
+    covered_ingredients.dedup();
+
+    println!("There are {} fresh ingredients.", covered_ingredients.len());
 }
 
 #[cfg(test)]
