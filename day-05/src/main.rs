@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::env;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -61,12 +62,23 @@ fn main() {
 
     println!("There are {} fresh ingredients.", fresh_ingredients.len());
 
-    let mut covered_ingredients = ranges.iter()
-        .flat_map(| r | r.clone().into_iter() )
-        .collect::<Vec<u64>>();
-    covered_ingredients.sort_unstable();
-    covered_ingredients.dedup();
+    // let mut covered_ingredients = ranges.iter()
+    //     .flat_map(| r | r.clone().into_iter() )
+    //     .collect::<Vec<u64>>();
+    // covered_ingredients.sort_unstable();
+    // covered_ingredients.dedup();
+    let mut covered_ingredients = HashSet::new();
 
+    for range in ranges {
+        for id in range.clone().into_iter() {
+            if !covered_ingredients.contains(&id) {
+                covered_ingredients.insert(id);
+            }
+        }
+        print!(".");
+    }
+
+    println!();
     println!("There are {} fresh ingredients.", covered_ingredients.len());
 }
 
