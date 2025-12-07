@@ -1,7 +1,7 @@
 use std::env;
-use std::ffi::c_int;
 use std::fs::File;
-use std::io::{BufRead, BufReader, Lines};
+use std::future::poll_fn;
+use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::str::FromStr;
 
@@ -82,14 +82,14 @@ fn main() {
         }
     }
 
-    println!("Result: {}", problems.iter().map(| p | p.result).sum::<u64>());
+    println!("Part 1 Result: {}", problems.iter().map(| p | p.result).sum::<u64>());
 
     let file = File::open(path);
 
     let reader = BufReader::new(file.unwrap());
     problems = CephalopodProblem::from_lines(reader.lines().map(| l | l.unwrap())).collect();
 
-    println!("Result: {}", problems.iter().map(| p | p.result).sum::<u64>());
+    println!("Part 2 Result: {}", problems.iter().map(| p | p.result).sum::<u64>());
 }
 
 #[derive(Clone)]
@@ -117,7 +117,7 @@ impl CephalopodProblem {
 
     fn with_string_operand(self, operand: &str) -> Self {
         let mut new_operands = self.operands;
-        for (index, item) in operand.chars().enumerate() {
+        for (index, item) in operand.chars().rev().enumerate() {
             if new_operands.is_empty() || new_operands.len() <= index {
                 new_operands.push(0u64);
             }
@@ -176,26 +176,68 @@ impl CephalopodProblem {
 
         let mut problems = vec![CephalopodProblem::new(); problem_indexes.len()];
 
-        let mut this_problem_starts_at = 0;
+        if (problems.len() > 0) {
+            // Parse the first problem
+            let mut this_problem_starts_at = 0;
+            let mut problem = problems[0].clone();
+            let mut next_problem_starts_at = problem_indexes[1];
+            let mut segment_length = next_problem_starts_at - this_problem_starts_at - 1;
+            for line in &lines[0..lines.len() - 1] {
+                let segment = &line.as_ref()[this_problem_starts_at..this_problem_starts_at + segment_length];
+                problem = problem.with_string_operand(segment);
+            }
+            let operator = operators[0];
+            match operator {
+                '+' => problem = problem.add(),
+                '*' => problem = problem.multiply(),
+                _ => panic!("Unexpected operator {:?}", operator),
+            }
+            problems[0] = problem;
 
-        let mut problem = problems[0].clone();
-        let next_problem_starts_at = problem_indexes[1];
-        let segment_length = next_problem_starts_at - this_problem_starts_at - 1;
-        for line in &lines[0..lines.len()-1] {
-            let segment = &line.as_ref()[this_problem_starts_at..this_problem_starts_at + segment_length];
-            println!("{:?}", segment);
-            problem = problem.with_string_operand(segment);
-        }
-        let operator = operators[0];
-        match operator {
-            '+' => problem = problem.add(),
-            '*' => problem = problem.multiply(),
-            _ => panic!("Unexpected operator {:?}", operator),
-        }
-        problems[0] = problem;
+            if problems.len() > 2 {
+                let mut problem_index = 1;
+                // Parse the middle problems
+                loop {
+                    this_problem_starts_at = next_problem_starts_at;
+                    problem = problems[problem_index].clone();
+                    next_problem_starts_at = problem_indexes[problem_index + 1];
+                    segment_length = next_problem_starts_at - this_problem_starts_at - 1;
+                    for line in &lines[0..lines.len() - 1] {
+                        let segment = &line.as_ref()[this_problem_starts_at..this_problem_starts_at + segment_length];
+                        problem = problem.with_string_operand(segment);
+                    }
+                    let operator = operators[problem_index];
+                    match operator {
+                        '+' => problem = problem.add(),
+                        '*' => problem = problem.multiply(),
+                        _ => panic!("Unexpected operator {:?}", operator),
+                    }
+                    problems[problem_index] = problem;
 
-        for index in [1..problem_indexes.iter().len()] {
+                    problem_index = problem_index + 1;
+                    if problem_index == problems.len() - 1 {
+                        break;
+                    }
+                }
+            }
 
+            if problems.len() > 1 {
+                // Parse the last problem
+                let problem_index = problems.len() - 1;
+                problem = problems[problem_index].clone();
+                this_problem_starts_at = problem_indexes[problem_index];
+                for line in &lines[0..lines.len() - 1] {
+                    let segment = &line.as_ref()[this_problem_starts_at..];
+                    problem = problem.with_string_operand(segment);
+                }
+                let operator = operators[problem_index];
+                match operator {
+                    '+' => problem = problem.add(),
+                    '*' => problem = problem.multiply(),
+                    _ => panic!("Unexpected operator {:?}", operator),
+                }
+                problems[problem_index] = problem;
+            }
         }
 
         problems.into_iter()
@@ -230,9 +272,9 @@ mod test{
         let builder = CephalopodProblem::new()
             .with_string_operand("12 ");
         assert_eq!(3, builder.operands.len());
-        assert_eq!(1, builder.operands[0]);
+        assert_eq!(0, builder.operands[0]);
         assert_eq!(2, builder.operands[1]);
-        assert_eq!(0, builder.operands[2]);
+        assert_eq!(1, builder.operands[2]);
     }
 
     #[test]
@@ -264,5 +306,16 @@ mod test{
         assert_eq!(8_313, problems[0].operands[1]);
         assert_eq!(9_439, problems[0].operands[2]);
         assert_eq!(697_487_891_823, problems[0].result);
+
+        assert_eq!(1, problems[1].operands[0]);
+        assert_eq!(379, problems[1].operands[1]);
+        assert_eq!(7_857, problems[1].operands[2]);
+        assert_eq!(8237, problems[1].result);
+
+        assert_eq!(6_797, problems[6].operands[0]);
+        assert_eq!(293, problems[6].operands[1]);
+        assert_eq!(861, problems[6].operands[2]);
+        assert_eq!(524, problems[6].operands[3]);
+        assert_eq!(8_475, problems[6].result);
     }
 }
