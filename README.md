@@ -21,7 +21,7 @@ Each day for the first 12 days of December 2025, a new puzzle will be released. 
 [Day 4 - Printing Department ⭐⭐](./day-04/README.md)  
 [Day 5 - Cafeteria ⭐⭐](./day-05/README.md)  
 [Day 6 - Trash Compactor ⭐⭐](./day-06/README.md)  
-[Day 7 - ???? ☆☆](./day-07/README.md)  
+[Day 7 - Laboratories ☆☆](./day-07/README.md)  
 [Day 8 - ???? ☆☆](./day-08/README.md)  
 [Day 9 - ???? ☆☆](./day-09/README.md)  
 [Day 10 - ???? ☆☆](./day-10/README.md)  
