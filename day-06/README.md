@@ -1,4 +1,4 @@
-﻿# Day 6 - Trash CompactorTrash Compactor
+﻿# Day 6 - Trash Compactor
 
 After helping the Elves in the kitchen, you were taking a break and helping them re-enact a movie scene when you over-enthusiastically jumped into the garbage chute!
 

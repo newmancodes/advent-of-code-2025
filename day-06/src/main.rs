@@ -1,6 +1,5 @@
 use std::env;
 use std::fs::File;
-use std::future::poll_fn;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::str::FromStr;
