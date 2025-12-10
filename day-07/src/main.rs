@@ -65,12 +65,17 @@ impl NodeGrid {
 
             for (index, node_option) in row.nodes.iter().enumerate() {
                 match node_option {
-                    Some(Node::StartPosition) => new_beam_positions.push(index),
+                    Some(Node::StartPosition) => {
+                        path_count = path_count + 1;
+                        new_beam_positions.push(index)
+                    },
                     Some(Node::Splitter) => {
                         // Split the beam if a beam fed into this splitter (based on column index).
                         if beam_row.beam_positions.contains(&index) {
                             if &index > &0 {
-                                new_beam_positions.push(index - 1);
+                                if !new_beam_positions.contains(&(index - 1)) {
+                                    new_beam_positions.push(index - 1);
+                                }
                             }
 
                             if index + 1 < row.nodes.len() {
@@ -162,7 +167,7 @@ mod test{
     }
 
     #[test]
-    fn example_with_one_unencountered_splitters_has_zero_split_and_one_path()
+    fn example_with_unencountered_splitters_has_zero_split_and_one_path()
     {
         let input = vec![
             "..S..",
@@ -177,7 +182,7 @@ mod test{
         let (split_count, path_count) = grid.unwrap().determine_split_and_path_counts();
 
         assert_eq!(split_count, 0);
-        // assert_eq!(path_count, 1);
+        assert_eq!(path_count, 1);
     }
 
     #[test]
@@ -196,7 +201,7 @@ mod test{
         let (split_count, path_count) = grid.unwrap().determine_split_and_path_counts();
 
         assert_eq!(split_count, 1);
-        // assert_eq!(path_count, 2);
+        assert_eq!(path_count, 2);
     }
 
     #[test]
@@ -215,7 +220,7 @@ mod test{
         let (split_count, path_count) = grid.unwrap().determine_split_and_path_counts();
 
         assert_eq!(split_count, 2);
-        // assert_eq!(path_count, 3);
+        assert_eq!(path_count, 3);
     }
 
     #[test]
@@ -234,7 +239,7 @@ mod test{
         let (split_count, path_count) = grid.unwrap().determine_split_and_path_counts();
 
         assert_eq!(split_count, 3);
-        // assert_eq!(path_count, 4);
+        assert_eq!(path_count, 4);
     }
 
     #[test]
@@ -264,6 +269,6 @@ mod test{
         let (split_count, path_count) = grid.unwrap().determine_split_and_path_counts();
 
         assert_eq!(split_count, 21);
-        // assert_eq!(path_count, 40);
+        assert_eq!(path_count, 40);
     }
 }
