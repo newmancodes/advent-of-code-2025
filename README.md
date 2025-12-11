@@ -24,6 +24,6 @@ Each day for the first 12 days of December 2025, a new puzzle will be released. 
 [Day 7 - Laboratories ⭐☆](./day-07/README.md)  
 [Day 8 - Playground ☆☆](./day-08/README.md)  
 [Day 9 - Movie Theater ☆☆](./day-09/README.md)  
-[Day 10 - ???? ☆☆](./day-10/README.md)  
-[Day 11 - ???? ☆☆](./day-11/README.md)  
+[Day 10 - Factory ☆☆](./day-10/README.md)  
+[Day 11 - Reactor ☆☆](./day-11/README.md)  
 [Day 12 - ???? ☆☆](./day-12/README.md) 
